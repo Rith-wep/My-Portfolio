@@ -14,54 +14,34 @@ import {
   Layers3,
   ShieldCheck,
 } from 'lucide-react'
+import { useI18n } from '../i18n-context'
 
 const projects = [
   {
-    title: 'Math Vision',
-    description:
-      'Upload a math problem as an image and receive a clear, step-by-step solution generated with Gemini.',
+    id: 'math-vision',
     domain: 'Cloudflare + Render',
     liveUrl: 'https://math-vision.com',
     sourceUrl: 'https://github.com/Rith-wep',
     accent: '#22c55e',
     icon: Layers3,
-    architecture: [
-      'MERN application with image uploads',
-      'Gemini-powered problem analysis',
-      'Deployed with Cloudflare and Render',
-    ],
     stack: ['React', 'Node.js', 'MongoDB', 'Gemini API'],
   },
   {
-    title: 'Scientia',
-    description:
-      'A full-stack knowledge platform deployed on AWS EC2, with a REST API and a repeatable server setup.',
+    id: 'scientia',
     domain: 'AWS EC2',
     liveUrl: '#scientia',
     sourceUrl: 'https://github.com/Rith-wep',
     accent: '#22c55e',
     icon: Cloud,
-    architecture: [
-      'React frontend with a REST API',
-      'Hosted on an AWS EC2 instance',
-      'Linux-based deployment workflow',
-    ],
     stack: ['React', 'REST API', 'AWS EC2', 'Linux'],
   },
   {
-    title: 'WorkCloud & Buy More E-Mart',
-    description:
-      'A business operations and e-commerce system with local payment support through KHQR and ABA PayWay.',
+    id: 'workcloud',
     domain: 'KHQR / ABA PayWay',
     liveUrl: '#workcloud',
     sourceUrl: 'https://github.com/Rith-wep',
     accent: '#22c55e',
     icon: ShieldCheck,
-    architecture: [
-      'Responsive React operations dashboard',
-      'KHQR and ABA PayWay integration',
-      'HMAC verification for payment requests',
-    ],
     stack: ['React', 'KHQR', 'ABA PayWay', 'HMAC'],
   },
 ]
@@ -69,6 +49,8 @@ const projects = [
 const tiltSpring = { stiffness: 160, damping: 18, mass: 0.55 }
 
 function ProjectCard({ project, index }) {
+  const { t } = useI18n()
+  const content = t('projects.items')[index]
   const cardRef = useRef(null)
   const rotateXValue = useMotionValue(0)
   const rotateYValue = useMotionValue(0)
@@ -134,75 +116,76 @@ function ProjectCard({ project, index }) {
         transformStyle: 'preserve-3d',
       }}
       whileHover={{ y: -7 }}
-      className="group relative rounded-[1.6rem] bg-gradient-to-br from-neutral-600/55 via-green-500/15 to-green-500/40 p-px shadow-2xl shadow-black/25"
+      className="group relative h-full rounded-[1.35rem] bg-gradient-to-br from-zinc-800/80 via-zinc-800/70 to-zinc-900/80 p-px shadow-2xl shadow-black/25 transition-all duration-300 ease-out hover:from-emerald-500/40 hover:via-zinc-700/80 hover:to-emerald-400/20 hover:shadow-[0_0_30px_-5px_rgba(16,185,129,0.15)]"
     >
-      <div className="relative flex h-full min-h-[29rem] flex-col overflow-hidden rounded-[calc(1.6rem-1px)] border border-white/5 bg-neutral-950/90 p-5 backdrop-blur-xl sm:min-h-[31rem] sm:p-7">
+      <div className="relative flex h-full min-h-[30rem] flex-col justify-between overflow-hidden rounded-[calc(1.35rem-1px)] border border-zinc-800/80 bg-zinc-900/60 p-5 backdrop-blur-md transition-all duration-300 ease-out group-hover:border-emerald-500/40 sm:min-h-[32rem] sm:p-7">
         <motion.div
           aria-hidden="true"
           style={{ background: highlight }}
-          className="pointer-events-none absolute inset-0 opacity-60 transition-opacity duration-300 group-hover:opacity-100"
+          className="pointer-events-none absolute inset-0 opacity-40 transition-opacity duration-300 ease-out group-hover:opacity-100"
         />
         <div
           aria-hidden="true"
-          className="absolute -right-20 -top-20 size-48 rounded-full opacity-10 blur-3xl transition-opacity duration-500 group-hover:opacity-20"
+          className="absolute -right-20 -top-20 size-48 rounded-full opacity-10 blur-3xl transition-opacity duration-500 ease-out group-hover:opacity-25"
           style={{ backgroundColor: project.accent }}
         />
 
-        <div className="relative flex items-start justify-between gap-4">
-          <div
-            className="grid size-12 place-items-center rounded-2xl border border-white/10 bg-white/5"
-            style={{ color: project.accent }}
-          >
-            <Icon className="size-5" />
-          </div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-green-500/25 bg-green-500/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.13em] text-green-400">
-            <span className="size-1.5 animate-pulse rounded-full bg-green-500" />
-            {project.domain}
-          </span>
-        </div>
-
-        <div className="relative mt-7">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-            Featured project / 0{index + 1}
-          </p>
-          <h3 className="text-2xl font-semibold tracking-tight text-white">
-            {project.title}
-          </h3>
-          <p className="mt-3 text-sm leading-6 text-slate-400">
-            {project.description}
-          </p>
-        </div>
-
-        <div className="relative mt-6 border-y border-white/7 py-5">
-          <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-slate-300">
-            <Code2 className="size-3.5 text-green-400" />
-            Key details
-          </p>
-          <ul className="space-y-2.5">
-            {project.architecture.map((item) => (
-              <li
-                key={item}
-                className="flex items-start gap-2.5 text-xs leading-5 text-slate-400"
-              >
-                <span
-                  className="mt-2 size-1 shrink-0 rounded-full"
-                  style={{ backgroundColor: project.accent }}
-                />
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="relative mt-5 flex flex-wrap gap-2">
-          {project.stack.map((technology) => (
-            <span
-              key={technology}
-              className="rounded-md border border-white/8 bg-white/[0.035] px-2.5 py-1.5 text-[10px] font-medium text-slate-300 transition-colors group-hover:border-white/15"
+        <div className="relative flex grow flex-col">
+          <div className="flex items-start justify-between gap-4">
+            <div
+              className="grid size-12 shrink-0 place-items-center rounded-2xl border border-white/10 bg-white/5 transition-all duration-300 ease-out group-hover:border-emerald-400/30 group-hover:bg-emerald-400/10"
+              style={{ color: project.accent }}
             >
-              {technology}
+              <Icon className="size-5 transition-transform duration-300 ease-out group-hover:scale-110" />
+            </div>
+            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/25 bg-zinc-950/45 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.13em] text-emerald-300 shadow-[0_0_18px_-10px_rgba(16,185,129,0.8)] backdrop-blur-sm transition-all duration-300 ease-out group-hover:border-emerald-300/45 group-hover:bg-emerald-400/10">
+              {project.domain}
             </span>
-          ))}
+          </div>
+
+          <div className="mt-7">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
+              {t('projects.featured')} / 0{index + 1}
+            </p>
+            <h3 className="text-2xl font-semibold tracking-tight text-white">
+            {content.title}
+          </h3>
+          <p className="mt-3 text-sm leading-6 text-zinc-400">
+            {content.description}
+          </p>
+          </div>
+
+          <div className="mt-6 border-y border-white/7 py-5 transition-colors duration-300 ease-out group-hover:border-emerald-400/15">
+            <p className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-zinc-300">
+              <Code2 className="size-3.5 text-emerald-400" />
+              {t('projects.details')}
+            </p>
+            <ul className="space-y-2.5">
+              {content.architecture.map((item) => (
+                <li
+                  key={item}
+                  className="flex items-start gap-2.5 text-xs leading-5 text-zinc-400"
+                >
+                  <span
+                    className="mt-2 size-1 shrink-0 rounded-full shadow-[0_0_8px_rgba(52,211,153,0.75)]"
+                    style={{ backgroundColor: project.accent }}
+                  />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="mt-5 flex flex-wrap gap-2">
+            {project.stack.map((technology) => (
+              <span
+                key={technology}
+                className="rounded-md border border-white/8 bg-white/[0.035] px-2.5 py-1.5 text-[10px] font-medium text-zinc-300 transition-all duration-300 ease-out hover:scale-105 hover:border-emerald-300/35 hover:bg-emerald-400/10 hover:text-emerald-100 group-hover:border-white/15"
+              >
+                {technology}
+              </span>
+            ))}
+          </div>
         </div>
 
         <div className="relative mt-auto flex flex-wrap items-center gap-2 pt-6 sm:gap-5 sm:pt-7">
@@ -212,21 +195,21 @@ function ProjectCard({ project, index }) {
             rel={project.liveUrl.startsWith('http') ? 'noreferrer' : undefined}
             onClick={celebrateLaunch}
             whileTap={{ scale: 0.96 }}
-            className="inline-flex min-h-11 items-center gap-2 rounded-lg px-2 text-xs font-semibold text-white transition-colors hover:bg-green-500/10 hover:text-green-400"
-            aria-label={`Open ${project.title} live demo`}
+            className="inline-flex min-h-11 items-center gap-2 rounded-lg px-2 text-xs font-semibold text-white transition-all duration-300 ease-out hover:bg-emerald-500/10 hover:text-emerald-300"
+            aria-label={t('projects.liveLabel', { title: content.title })}
           >
-            Live Demo
-            <ExternalLink className="size-3.5" />
+            {t('projects.liveDemo')}
+            <ExternalLink className="size-3.5 transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </motion.a>
           <a
             href={project.sourceUrl}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex min-h-11 items-center gap-2 rounded-lg px-2 text-xs font-semibold text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
-            aria-label={`View ${project.title} source code`}
+            className="inline-flex min-h-11 items-center gap-2 rounded-lg px-2 text-xs font-semibold text-zinc-400 transition-all duration-300 ease-out hover:bg-white/5 hover:text-white"
+            aria-label={t('projects.sourceLabel', { title: content.title })}
           >
-            Source Code
-            <Code2 className="size-3.5" />
+            {t('projects.sourceCode')}
+            <Code2 className="size-3.5 transition-transform duration-300 ease-out group-hover:scale-110" />
           </a>
         </div>
       </div>
@@ -235,6 +218,8 @@ function ProjectCard({ project, index }) {
 }
 
 function Projects() {
+  const { t } = useI18n()
+
   return (
     <section
       id="work"
@@ -249,21 +234,20 @@ function Projects() {
       >
         <div>
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-green-400">
-            Selected projects
+            {t('projects.eyebrow')}
           </p>
-          <h2 className="max-w-2xl text-3xl font-semibold tracking-[-0.04em] text-white min-[390px]:text-4xl sm:text-5xl">
-            A few things I&apos;ve built.
+          <h2 className="max-w-2xl bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-3xl font-semibold tracking-[-0.04em] text-transparent min-[390px]:text-4xl sm:text-5xl">
+            {t('projects.title')}
           </h2>
         </div>
         <p className="max-w-sm text-sm leading-6 text-slate-400">
-          Practical web products covering AI-assisted learning, cloud
-          deployment, and local payment integrations.
+          {t('projects.summary')}
         </p>
       </motion.div>
 
       <div className="grid gap-5 lg:grid-cols-3">
         {projects.map((project, index) => (
-          <ProjectCard key={project.title} project={project} index={index} />
+          <ProjectCard key={project.id} project={project} index={index} />
         ))}
       </div>
 
@@ -274,7 +258,7 @@ function Projects() {
           rel="noreferrer"
           className="group inline-flex items-center gap-2 text-sm font-medium text-slate-400 transition-colors hover:text-white"
         >
-          Browse all repositories
+          {t('projects.browseAll')}
           <ArrowUpRight className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </a>
       </div>

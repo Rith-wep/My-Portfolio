@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
+import { useI18n } from '../i18n-context'
 
 const brandLogos = {
   java:
@@ -40,8 +41,6 @@ const brandLogos = {
 const categories = [
   {
     id: 'languages',
-    label: 'Languages & Frameworks',
-    eyebrow: 'Languages / Frameworks / Web',
     accent: '#22c55e',
     skills: [
       {
@@ -68,8 +67,6 @@ const categories = [
   },
   {
     id: 'cloud',
-    label: 'Cloud & Infrastructure',
-    eyebrow: 'Infrastructure / Edge / Operations',
     accent: '#22c55e',
     skills: [
       {
@@ -96,8 +93,6 @@ const categories = [
   },
   {
     id: 'automation',
-    label: 'CI/CD & Automation',
-    eyebrow: 'Delivery / Build / Scripting',
     accent: '#22c55e',
     skills: [
       { name: 'GitHub Actions', ecosystem: 'Automated workflows', role: 'CI/CD', logo: brandLogos.githubActions },
@@ -106,14 +101,14 @@ const categories = [
     ],
   },
   {
-    id: 'security', label: 'Monitoring & Security', eyebrow: 'Protection / Hosting / Operations', accent: '#22c55e',
+    id: 'security', accent: '#22c55e',
     skills: [
       { name: 'SSL/TLS', ecosystem: 'Certificates & encryption', role: 'Security', logo: brandLogos.openssl },
       { name: 'Render', ecosystem: 'Application deployment', role: 'Hosting', logo: brandLogos.render },
     ],
   },
   {
-    id: 'tools', label: 'Dev Tools', eyebrow: 'Source / Testing / Editor', accent: '#22c55e',
+    id: 'tools', accent: '#22c55e',
     skills: [
       { name: 'Git', ecosystem: 'Version control', role: 'Source Control', logo: brandLogos.git },
       { name: 'Postman', ecosystem: 'API development & testing', role: 'API Tool', logo: brandLogos.postman },
@@ -121,7 +116,7 @@ const categories = [
     ],
   },
   {
-    id: 'databases', label: 'Databases', eyebrow: 'Document / Relational / SQL', accent: '#22c55e',
+    id: 'databases', accent: '#22c55e',
     skills: [
       { name: 'MongoDB', ecosystem: 'Document database', role: 'NoSQL', logo: brandLogos.mongodb },
       { name: 'PostgreSQL', ecosystem: 'Relational database', role: 'SQL', logo: brandLogos.postgresql },
@@ -154,6 +149,7 @@ const cardVariants = {
 }
 
 function SkillsGrid() {
+  const { t } = useI18n()
   const [activeId, setActiveId] = useState(categories[0].id)
   const activeCategory =
     categories.find((category) => category.id === activeId) ?? categories[0]
@@ -172,16 +168,12 @@ function SkillsGrid() {
       >
         <div>
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-green-400">
-            Skills &amp; tools
+            {t('skills.eyebrow')}
           </p>
           <h2 className="max-w-2xl text-3xl font-semibold tracking-[-0.04em] text-white min-[390px]:text-4xl sm:text-5xl">
-            Tools I work with.
+            {t('skills.title')}
           </h2>
         </div>
-        <p className="max-w-md text-sm leading-6 text-slate-400">
-          The languages, frameworks, infrastructure, and development tools I
-          use across backend and full-stack projects.
-        </p>
       </motion.div>
 
       <div>
@@ -203,12 +195,12 @@ function SkillsGrid() {
                 onClick={() => setActiveId(category.id)}
                 className={`min-h-11 shrink-0 snap-start rounded-full border px-4 py-2.5 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500 ${
                   isActive
-                    ? 'border-green-500 bg-green-500 text-white shadow-[0_0_22px_rgba(34,197,94,0.18)]'
+                    ? 'border-white/80 bg-green-500 text-white shadow-[0_0_22px_rgba(34,197,94,0.18)]'
                     : 'border-neutral-800 bg-neutral-900/70 text-neutral-400 hover:border-green-500/40 hover:text-green-400'
                 }`}
               >
                 <span className="block text-sm font-semibold">
-                  {category.label}
+                  {t(`skills.categories.${category.id}`)}
                 </span>
               </button>
             )
@@ -220,16 +212,9 @@ function SkillsGrid() {
           role="tabpanel"
           className="mt-6 min-h-[18rem]"
         >
-          <div className="mb-4 flex items-center gap-3">
-            <span
-              className="size-2 rounded-full"
-              style={{
-                backgroundColor: activeCategory.accent,
-                boxShadow: `0 0 14px ${activeCategory.accent}`,
-              }}
-            />
+          <div className="mb-4 flex items-center">
             <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-500">
-              {activeCategory.eyebrow}
+              {t(`skills.categoryEyebrows.${activeCategory.id}`)}
             </p>
           </div>
 

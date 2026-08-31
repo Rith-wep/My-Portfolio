@@ -11,6 +11,7 @@ import {
   Mail,
   Music2,
 } from 'lucide-react'
+import { useI18n } from '../i18n-context'
 
 const email = 'sovannarith1293@gmail.com'
 
@@ -38,6 +39,7 @@ const socialLinks = [
 ]
 
 function ContactFooter() {
+  const { t } = useI18n()
   const [copied, setCopied] = useState(false)
   const feedbackTimer = useRef()
 
@@ -88,10 +90,10 @@ function ContactFooter() {
         <div className="relative grid items-end gap-12 lg:grid-cols-[1.2fr_0.8fr]">
           <div>
             <p className="mb-5 text-xs font-semibold uppercase tracking-[0.22em] text-green-400">
-              Have a project in mind?
+              {t('contact.eyebrow')}
             </p>
             <h2 className="max-w-3xl text-3xl font-semibold leading-tight tracking-[-0.045em] text-white min-[390px]:text-4xl sm:text-[2.75rem] lg:text-5xl">
-              Let&apos;s talk about what you&apos;re building.
+              {t('contact.title')}
             </h2>
 
             <div className="mt-8 flex flex-wrap items-center gap-3 sm:mt-9">
@@ -108,7 +110,7 @@ function ContactFooter() {
                 type="button"
                 onClick={copyEmail}
                 whileTap={{ scale: 0.95 }}
-                aria-label={copied ? 'Email copied' : 'Copy email address'}
+                aria-label={copied ? t('contact.emailCopied') : t('contact.copyEmailLabel')}
                 className={`inline-flex min-h-12 w-full min-w-28 items-center justify-center gap-2 rounded-full border px-4 text-xs font-semibold transition-colors sm:w-auto ${
                   copied
                     ? 'border-green-500/30 bg-green-500/10 text-green-400'
@@ -129,7 +131,7 @@ function ContactFooter() {
                     ) : (
                       <Copy className="size-4" />
                     )}
-                    {copied ? 'Copied!' : 'Copy Email'}
+                    {copied ? t('contact.copied') : t('contact.copyEmail')}
                   </motion.span>
                 </AnimatePresence>
               </motion.button>
@@ -138,7 +140,7 @@ function ContactFooter() {
 
           <div className="lg:justify-self-end">
             <p className="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-              Find me online
+              {t('contact.online')}
             </p>
             <div className="grid grid-cols-2 gap-3 sm:flex">
               {socialLinks.map(({ label, href, icon: Icon }) => (
@@ -164,16 +166,18 @@ function ContactFooter() {
           <div className="flex items-start gap-3 rounded-xl border border-white/8 bg-black/15 px-4 py-3 text-xs leading-5 text-slate-400 sm:inline-flex sm:items-center sm:rounded-full sm:py-2.5">
             <GraduationCap className="size-4 shrink-0 text-green-400" />
             <span>
-              B.Sc in Computer Science
+              {t('contact.degree')}
               <span className="mx-2 text-slate-700">/</span>
-               University of Mumbai <span className="mx-2 text-slate-700">/</span> India
+              {t('contact.university')}
+              <span className="mx-2 text-slate-700">/</span>
+              {t('contact.country')}
             </span>
           </div>
         </div>
       </motion.div>
 
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 py-8 text-center text-[11px] text-slate-600 sm:flex-row sm:text-left">
-        <p>&copy; {new Date().getFullYear()} Hong Sovannarith. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Hong Sovannarith. {t('contact.rights')}</p>
         
       </div>
     </footer>

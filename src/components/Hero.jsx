@@ -3,6 +3,7 @@ import {
   motion,
   useMotionValue,
   useReducedMotion,
+  useScroll,
   useSpring,
   useTransform,
 } from 'motion/react'
@@ -14,66 +15,43 @@ import {
   Mail,
   Music2,
 } from 'lucide-react'
+import { useI18n } from '../i18n-context'
 
 const spring = { type: 'spring', stiffness: 150, damping: 15 }
 
-const headlineVariants = {
-  hidden: {},
-  visible: {
-    transition: { delayChildren: 0.25, staggerChildren: 0.035 },
-  },
-}
-
-const letterVariants = {
-  hidden: { opacity: 0, y: 24, filter: 'blur(7px)' },
-  visible: {
-    opacity: 1,
-    y: 0,
-    filter: 'blur(0px)',
-    transition: { duration: 0.45, ease: 'easeOut' },
-  },
-}
-
 function AnimatedHeadline() {
-  const words = 'I build reliable web'.split(' ')
+  const { language, t } = useI18n()
+  const title = t('hero.title')
+  const titleLines = (() => {
+    if (language === 'en') return ['I build reliable', 'web systems.']
+    if (language === 'km') return title.split('\n')
+    if (language === 'zh' && title.includes(' Web ')) {
+      const [beforeWeb, afterWeb] = title.split(' Web ')
+      return [`${beforeWeb} Web`, afterWeb]
+    }
+
+    return [title]
+  })()
+  const headlineSize =
+    language === 'km'
+      ? 'text-[1.75rem] leading-[1.24] min-[390px]:text-[1.95rem] sm:text-[2.75rem] xl:text-[3.45rem] 2xl:text-[3.85rem]'
+      : language === 'zh'
+        ? 'text-[1.85rem] leading-[1.16] min-[390px]:text-[2.1rem] sm:text-[3rem] xl:text-[3.7rem] 2xl:text-[4.05rem]'
+        : 'text-[2.35rem] leading-[1.08] min-[390px]:text-[2.7rem] sm:text-6xl sm:leading-[1.03] xl:text-[5.15rem] 2xl:text-[5.65rem]'
 
   return (
     <motion.h1
-      variants={headlineVariants}
-      initial="hidden"
-      animate="visible"
-      aria-label="I build reliable web systems."
-      className="text-balance text-[2.35rem] font-semibold leading-[1.08] tracking-[-0.04em] text-white min-[390px]:text-[2.7rem] sm:text-6xl sm:leading-[1.03] xl:text-7xl"
+      initial={{ opacity: 0, clipPath: 'inset(0 100% 0 0)' }}
+      animate={{ opacity: 1, clipPath: 'inset(0 0% 0 0)' }}
+      transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+      aria-label={title}
+      className={`${headlineSize} bg-gradient-to-r from-white via-zinc-200 to-emerald-400 bg-clip-text text-balance font-semibold tracking-normal text-transparent [-webkit-text-stroke:0.8px_rgba(255,255,255,0.28)] [filter:drop-shadow(0_0_18px_rgba(16,185,129,0.16))]`}
     >
-      <span aria-hidden="true">
-        {words.map((word) => (
-          <span
-            key={word}
-            className="mr-[0.22em] inline-block whitespace-nowrap"
-          >
-            {word.split('').map((letter, index) => (
-              <motion.span
-                key={`${word}-${index}`}
-                variants={letterVariants}
-                className="inline-block"
-              >
-                {letter}
-              </motion.span>
-            ))}
-          </span>
-        ))}
-        <span className="inline-block whitespace-nowrap bg-gradient-to-r from-green-300 via-green-400 to-green-500 bg-clip-text text-transparent">
-          {'systems.'.split('').map((letter, index) => (
-            <motion.span
-              key={`systems-${index}`}
-              variants={letterVariants}
-              className="inline-block"
-            >
-              {letter}
-            </motion.span>
-          ))}
+      {titleLines.map((line) => (
+        <span key={line} className="block">
+          {line}
         </span>
-      </span>
+      ))}
     </motion.h1>
   )
 }
@@ -114,6 +92,7 @@ function MagneticLink({ children, className, href, ...props }) {
 }
 
 function Portrait() {
+  const { t } = useI18n()
   const cardRef = useRef(null)
   const prefersReducedMotion = useReducedMotion()
   const rotateXTarget = useMotionValue(0)
@@ -139,7 +118,7 @@ function Portrait() {
   }
 
   return (
-    <div className="relative mx-auto w-full max-w-[19rem] [perspective:1000px] sm:max-w-[22rem] lg:max-w-[25rem]">
+    <div className="relative mx-auto w-full max-w-[21rem] [perspective:1000px] sm:max-w-[25rem] lg:max-w-[32rem] xl:max-w-[35rem]">
       <motion.div
         ref={cardRef}
         onPointerMove={handlePointerMove}
@@ -151,13 +130,15 @@ function Portrait() {
           '--glow-x': glowX,
           '--glow-y': glowY,
         }}
-        className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-green-500/40 bg-slate-900 shadow-[0_0_35px_rgba(34,197,94,0.28)]"
+        className="relative aspect-square overflow-hidden rounded-full bg-gradient-to-br from-white/80 via-emerald-300/85 to-emerald-600/90 p-[5px] shadow-[0_18px_70px_rgba(0,0,0,0.42)] sm:p-[6px]"
       >
-        <img
-          src="/profile.jpg"
-          alt="Hong Sovannarith"
-          className="h-full w-full object-cover object-top transition-transform duration-700 hover:scale-[1.025]"
-        />
+        <div className="h-full w-full overflow-hidden rounded-full bg-zinc-950">
+          <img
+            src="/profile.jpg"
+            alt="Hong Sovannarith"
+            className="h-full w-full object-cover object-[50%_36%] transition-transform duration-700 hover:scale-[1.04]"
+          />
+        </div>
         <motion.div
           aria-hidden="true"
           style={{
@@ -166,15 +147,13 @@ function Portrait() {
           }}
           className="pointer-events-none absolute inset-0"
         />
-        <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-slate-950/80 to-transparent" />
-
-        <div
-          className="absolute inset-x-4 bottom-5 flex items-center justify-center rounded-full border border-white/15 bg-slate-950/55 px-3 py-2 text-center text-[11px] font-medium leading-4 text-white shadow-xl backdrop-blur-xl sm:left-1/2 sm:right-auto sm:w-max sm:-translate-x-1/2 sm:whitespace-nowrap sm:px-4 sm:text-sm"
-        >
-          {/* <span className="size-2 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.9)]" /> */}
-          Backend &amp; DevOps Engineer
-        </div>
       </motion.div>
+
+      <div
+        className="relative z-10 mx-auto -mt-8 flex w-max max-w-[90%] items-center justify-center rounded-full border border-emerald-500/30 bg-zinc-900/80 px-4 py-2 text-center text-[11px] font-medium leading-4 text-emerald-400 shadow-[0_18px_45px_rgba(0,0,0,0.32)] backdrop-blur-md sm:-mt-9 sm:px-5 sm:text-sm"
+      >
+        {t('hero.role')}
+      </div>
 
     </div>
   )
@@ -201,54 +180,68 @@ const socialLinks = [
 ]
 
 function Hero() {
+  const { t } = useI18n()
+  const sectionRef = useRef(null)
+  const prefersReducedMotion = useReducedMotion()
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  })
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, 70])
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.75], [1, 0.35])
+  const portraitY = useTransform(scrollYProgress, [0, 1], [0, -45])
+  const portraitScale = useTransform(scrollYProgress, [0, 1], [1, 0.92])
+
   return (
     <section
+      ref={sectionRef}
       id="home"
-      className="relative z-10 mx-auto grid min-h-screen w-full max-w-7xl items-center gap-12 px-5 pb-20 pt-24 sm:px-6 sm:py-24 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16 lg:px-10"
+      className="relative z-10 mx-auto grid min-h-[calc(100svh-4.75rem)] w-full max-w-[92rem] items-center gap-8 px-5 pb-12 pt-36 sm:px-6 sm:pb-16 sm:pt-36 lg:grid-cols-[1.04fr_0.96fr] lg:gap-16 lg:px-10 lg:py-14 xl:min-h-[calc(100svh-5rem)] xl:gap-20"
     >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: 'easeOut' }}
+        style={prefersReducedMotion ? undefined : { y: contentY, opacity: contentOpacity }}
         className="order-2 text-center lg:order-1 lg:text-left"
       >
         <AnimatedHeadline />
 
-        <p className="mx-auto mt-7 max-w-xl text-pretty text-base leading-7 text-slate-400 sm:text-lg lg:mx-0">
-          I&apos;m a backend and DevOps engineer working with Java, Spring
-          Boot, Node.js, AWS, and Cloudflare. I build APIs, deploy services,
-          and keep production systems running reliably.
+        <p className="mx-auto mt-6 max-w-2xl text-pretty text-base leading-7 text-slate-400 sm:text-lg lg:mx-0 xl:text-xl xl:leading-8">
+          {t('hero.subtitle')}
         </p>
 
-        <div className="mt-8 flex flex-wrap justify-center gap-3 sm:mt-9 sm:gap-4 lg:justify-start">
-          <MagneticLink
-            href="#work"
-            className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-green-500 bg-green-500 px-6 py-3.5 text-sm font-semibold text-white shadow-[0_0_26px_rgba(34,197,94,0.2)] transition-all hover:border-green-400 hover:bg-green-400 hover:shadow-[0_0_32px_rgba(34,197,94,0.3)] sm:w-auto"
-          >
-            View Projects
-            <ArrowDownRight className="size-4" />
-          </MagneticLink>
-          <MagneticLink
-            href="#contact"
-            className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-green-500/40 bg-green-500/5 px-6 py-3.5 text-sm font-semibold text-green-400 backdrop-blur-md transition-colors hover:border-green-500/70 hover:bg-green-500/15 sm:w-auto"
-          >
-            Get in Touch
-          </MagneticLink>
-        </div>
-
-        <div className="mt-8 flex justify-center gap-3 lg:justify-start">
-          {socialLinks.map(({ label, href, icon: Icon }) => (
+        <div className="mt-7 flex flex-col items-center justify-center gap-4 sm:mt-8 lg:items-start">
+          <div className="flex w-full flex-wrap items-center justify-center gap-3 sm:w-auto sm:gap-4 lg:justify-start">
             <MagneticLink
-              key={label}
-              href={href}
-              aria-label={label}
-              target={href.startsWith('http') ? '_blank' : undefined}
-              rel={href.startsWith('http') ? 'noreferrer' : undefined}
-              className="grid size-11 place-items-center rounded-full border border-white/10 bg-slate-900/70 text-slate-400 backdrop-blur-md transition-colors hover:border-green-500/40 hover:text-green-400"
+              href="#work"
+              className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full border-2 border-white/70 bg-green-500 px-4 py-3.5 text-sm font-semibold text-white shadow-[0_0_26px_rgba(34,197,94,0.2)] transition-all hover:border-emerald-200 hover:bg-green-400 hover:shadow-[0_0_32px_rgba(34,197,94,0.3)] sm:flex-none sm:px-6"
             >
-              <Icon className="size-[1.1rem]" />
+              {t('hero.viewProjects')}
+              <ArrowDownRight className="size-4" />
             </MagneticLink>
-          ))}
+            <MagneticLink
+              href="#contact"
+              className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-full border border-green-500/40 bg-green-500/5 px-4 py-3.5 text-sm font-semibold text-green-400 backdrop-blur-md transition-all hover:border-green-500/70 hover:bg-green-500/15 sm:flex-none sm:px-6"
+            >
+              {t('hero.getInTouch')}
+            </MagneticLink>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-3 lg:justify-start">
+            {socialLinks.map(({ label, href, icon: Icon }) => (
+              <MagneticLink
+                key={label}
+                href={href}
+                aria-label={label}
+                target={href.startsWith('http') ? '_blank' : undefined}
+                rel={href.startsWith('http') ? 'noreferrer' : undefined}
+                className="grid size-11 place-items-center rounded-full border border-white/10 bg-zinc-900/70 text-slate-400 backdrop-blur-md transition-all hover:scale-105 hover:border-emerald-500/50 hover:text-emerald-400 hover:shadow-[0_0_24px_-8px_rgba(16,185,129,0.6)]"
+              >
+                <Icon className="size-[1.1rem]" />
+              </MagneticLink>
+            ))}
+          </div>
         </div>
       </motion.div>
 
@@ -256,6 +249,7 @@ function Hero() {
         initial={{ opacity: 0, scale: 0.94 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8, delay: 0.12, ease: 'easeOut' }}
+        style={prefersReducedMotion ? undefined : { y: portraitY, scale: portraitScale }}
         className="order-1 px-5 sm:px-8 lg:order-2 lg:px-0"
       >
         <Portrait />
