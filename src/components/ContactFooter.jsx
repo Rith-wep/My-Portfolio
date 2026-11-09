@@ -89,10 +89,7 @@ function ContactFooter() {
 
         <div className="relative grid items-end gap-12 lg:grid-cols-[1.2fr_0.8fr]">
           <div>
-            <p className="mb-5 text-xs font-semibold uppercase tracking-[0.22em] text-green-400">
-              {t('contact.eyebrow')}
-            </p>
-            <h2 className="max-w-3xl text-3xl font-semibold leading-tight tracking-[-0.045em] text-white min-[390px]:text-4xl sm:text-[2.75rem] lg:text-5xl">
+            <h2 className="max-w-3xl text-2xl font-semibold leading-tight tracking-[-0.045em] text-white min-[390px]:text-3xl sm:text-[2.75rem] lg:text-5xl">
               {t('contact.title')}
             </h2>
 

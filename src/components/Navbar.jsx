@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import {
   ChevronDown,
@@ -25,26 +25,43 @@ function Navbar() {
   const selectedLanguage =
     languages.find((item) => item.code === language) ?? languages[0]
 
+  useEffect(() => {
+    const sections = navLinks
+      .map((link) => document.querySelector(link.href))
+      .filter(Boolean)
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
+        if (visible) setActiveHref(`#${visible.target.id}`)
+      },
+      { rootMargin: '-20% 0px -65%', threshold: [0.05, 0.2, 0.5] },
+    )
+    sections.forEach((section) => observer.observe(section))
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <motion.header
       initial={{ opacity: 0, y: -18 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, ease: 'easeOut' }}
-      className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-neutral-950/90 backdrop-blur-xl"
+      className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.08] bg-[#101112]/95 shadow-[0_1px_0_rgba(0,0,0,.35),0_10px_30px_rgba(0,0,0,.12)] backdrop-blur-xl"
     >
       <nav
         aria-label="Main navigation"
-        className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-y-2 px-5 py-3 sm:px-6 lg:grid lg:h-[4.75rem] lg:grid-cols-[1fr_auto_1fr] lg:gap-y-0 lg:px-10 lg:py-0 xl:h-20"
+        className="mx-auto grid w-full max-w-[90rem] grid-cols-[1fr_auto] items-center gap-x-3 px-3 pt-2 sm:px-5 lg:h-[4.25rem] lg:grid-cols-[1fr_minmax(28rem,36rem)_1fr] lg:px-8 lg:py-0"
       >
         <a
           href="#home"
           aria-label="Return to hero"
-          className="shrink-0 text-base font-bold tracking-[-0.03em] text-white transition-colors hover:text-green-400 lg:text-lg"
+          className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-green-500 text-base font-extrabold tracking-[-0.06em] text-white shadow-[0_0_0_4px_rgba(34,197,94,.08)] transition-transform hover:scale-105 lg:size-11"
         >
-          Na<span className="text-green-500">Rith</span>
+          NR
         </a>
 
-        <div className="order-3 flex w-full min-w-0 items-center justify-center overflow-x-auto pt-1 lg:order-none lg:w-auto lg:justify-self-center lg:pt-0 lg:gap-2">
+        <div className="order-3 col-span-2 mt-1 grid w-full grid-cols-4 lg:order-none lg:col-span-1 lg:mt-0 lg:h-full lg:justify-self-center">
           {navLinks.map((link) => {
             const Icon = link.icon
 
@@ -53,21 +70,22 @@ function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setActiveHref(link.href)}
-                className={`relative inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-lg px-2 py-2 text-[11px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-green-500 min-[390px]:px-2.5 sm:gap-2 sm:px-4 sm:text-sm lg:min-h-12 lg:px-5 lg:text-[15px] ${
+                aria-current={activeHref === link.href ? 'page' : undefined}
+                className={`group relative inline-flex min-h-11 items-center justify-center gap-2 px-2 text-[11px] font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-green-500 sm:text-xs lg:h-full lg:min-h-0 lg:px-4 lg:text-sm ${
                   activeHref === link.href
                     ? 'text-green-400'
-                    : 'text-slate-400 hover:text-green-400'
+                    : 'text-slate-400 hover:bg-white/[0.045] hover:text-slate-100'
                 }`}
               >
                 {activeHref === link.href && (
                   <motion.span
                     layoutId="active-navigation"
                     aria-hidden="true"
-                    className="absolute inset-0 rounded-lg border border-green-500/25 bg-green-500/10"
-                    transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                    className="absolute inset-x-2 bottom-0 h-[3px] rounded-t-full bg-green-500 shadow-[0_-2px_12px_rgba(34,197,94,.35)] lg:inset-x-3"
+                    transition={{ type: 'spring', stiffness: 500, damping: 38 }}
                   />
                 )}
-                <Icon className="relative z-10 size-3.5 sm:size-4" />
+                <Icon className="relative z-10 size-[1.05rem] transition-transform group-hover:scale-105 lg:size-[1.15rem]" strokeWidth={activeHref === link.href ? 2.35 : 1.8} />
                 <span className="relative z-10">{t(`nav.${link.key}`)}</span>
               </a>
             )
@@ -89,18 +107,18 @@ function Navbar() {
             onClick={() => setIsLanguageMenuOpen((isOpen) => !isOpen)}
             aria-expanded={isLanguageMenuOpen}
             aria-label={t('nav.language')}
-            className="relative z-20 flex min-h-10 shrink-0 items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.035] px-2 py-2 text-xs font-semibold text-slate-300 transition-colors hover:border-green-500/35 sm:gap-2 sm:px-3 lg:min-h-12 lg:px-4"
+            className="relative z-20 flex size-10 shrink-0 items-center justify-center gap-1.5 rounded-full bg-white/[0.07] text-xs font-semibold text-slate-300 transition-colors hover:bg-white/[0.12] sm:w-auto sm:px-3 lg:h-11"
           >
-            <Languages className="hidden size-4 text-green-400 sm:block" />
+            <Languages className="size-4 text-green-400" />
             <img
               src={selectedLanguage.flagUrl}
               alt=""
-              className="h-3.5 w-5 rounded-[2px] object-cover ring-1 ring-white/15 sm:h-4 sm:w-6"
+              className="hidden h-4 w-6 rounded-[2px] object-cover ring-1 ring-white/15 sm:block"
             />
-            <span className="text-xs font-semibold text-slate-200 lg:text-sm">
+            <span className="hidden text-xs font-semibold text-slate-200 sm:block">
               {selectedLanguage.short}
             </span>
-            <ChevronDown className={`size-3.5 text-slate-400 transition-transform ${isLanguageMenuOpen ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`hidden size-3.5 text-slate-400 transition-transform sm:block ${isLanguageMenuOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {isLanguageMenuOpen && (
@@ -133,7 +151,7 @@ function Navbar() {
 
           <a
             href="#contact"
-            className="group ml-5 hidden shrink-0 items-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:border-green-500/50 hover:bg-green-500/15 md:flex lg:min-h-12 lg:px-5 lg:text-sm"
+            className="group ml-2 hidden h-11 shrink-0 items-center gap-2 rounded-full bg-white/[0.07] px-4 text-xs font-semibold text-white transition-colors hover:bg-green-500/15 md:flex lg:text-sm"
           >
             <BriefcaseBusiness className="size-4 text-green-400 transition-transform group-hover:scale-105" />
             {t('nav.available')}
